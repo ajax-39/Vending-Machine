@@ -3,34 +3,39 @@ Vending Machine Project
 Overview
 This project implements a vending machine system in C++. The vending machine allows users to select products from various categories, add them to the cart, view the cart, and proceed with the checkout process. Additionally, it provides administrative functionalities to manage product inventory and settings.
 
-## Modules
+Modules
 The project is structured into two main modules:
-1. **User Module:** This module handles user interactions with the vending machine, including browsing products, adding items to the cart, and completing transactions.
-2. **Administration Module:** This module provides administrative functionalities such as managing product inventory, updating prices, and viewing sales statistics.
+1. User Module: This module handles user interactions with the vending machine, including browsing products, adding items to the cart, and completing transactions.
+2. Administration Module: This module provides administrative functionalities such as managing product inventory, updating prices, and viewing sales statistics.
 
-## Features
+Features
 - Displaying product categories and their respective items
 - Adding items to the cart
 - Viewing and editing the cart
 - Checking out and completing transactions
 - Administrative access for managing inventory and settings
 
-## Usage
+Usage
 To use the vending machine system:
 1. Compile and run the main program.
 2. Follow the on-screen prompts to navigate through the user interface.
 3. For administrative tasks, select the appropriate option from the settings menu.
 
-## Technologies Used
+Technologies Used
 - C++ programming language
 - Standard Template Library (STL) for data structures and algorithms
 - Object-oriented programming principles for modular design
 
-## Contributors
-- [Your Name]: Developer
-- [Contributor Name]: Contributor (if applicable)
+Contributors
+Team Leader
+Atharv Jagzap
 
-## License
-This project is licensed under the [MIT License](LICENSE).
-
-Feel free to contribute, report issues, or suggest improvements!
+Team Members
+Aniket Chawardol
+Aditya Medhane
+Suyash Patil
+Vishwas Kulkarni
+Hemant Sai Somaraju
+Parv Mittal
+Amogh Deshpande
+Owaish 
