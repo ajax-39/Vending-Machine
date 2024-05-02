@@ -1,5 +1,3 @@
-// Final Changes
-//chutyas
 #include <iostream>
 #include <vector>
 #include <string>
@@ -9,67 +7,9 @@
 
 using namespace std;
 
+int inputChecker(string &s);
 
-int inputChecker(string &s)
-{
-    
-    bool check;
-    do
-    {
-        check=true;
-    getline(cin,s);
-    
-    for(int i=0; i<s.length() ;i++ )
-    {
-        if(!(s[i]>='0'  && s[i]<='9'))
-        {
-            cout<<"Enter valid input "<<endl;
-            check=false;
-            break;
-        }
-    }}while(!check);
-    
-    return stoi(s);
-}
-
-float inputCheckerFloat(string &s) {
-    bool check;
-    do {
-        check = true;
-        getline(cin, s);
-        
-        // Check for empty string
-        if (s.empty()) {
-            cout << "Enter valid input" << endl;
-            check = false;
-            continue;
-        }
-
-        int dotCount = 0;
-        for (size_t i = 0; i < s.length(); i++) {
-            if (s[i] == '.') {
-                dotCount++;
-                // Check if dot is at the right position
-                if (i == 0 || i == s.length() - 1 || dotCount > 1) {
-                    cout << "Enter valid input" << endl;
-                    check = false;
-                    break;
-                }
-            } else if (!(isdigit(s[i]) || s[i] == '-')) { // Allowing negative numbers
-                cout << "Enter valid input" << endl;
-                check = false;
-                break;
-            }
-        }
-        if(dotCount==0) // No dot present
-        {
-            cout << "Enter valid input" << endl;
-            check = false;
-        }
-    } while (!check);
-
-    return stof(s);
-}
+float inputCheckerFloat(string &s);
 
 // Struct to represent a product
 class Product
@@ -89,6 +29,7 @@ public:
     string name;
     float price;
     int quantity = 0, stock; // Quantity attribute to keep track of the quantity in the cart
+    int qtySold = 0;
 };
 
 class Administration
@@ -97,6 +38,7 @@ private:
     int pin;
 
 public:
+    vector<Product> deletedprd;
     Administration()
     {
         pin = 1234;
@@ -111,6 +53,201 @@ public:
                  << setw(10) << product.stock << endl;
         }
     }
+    void editInventory(vector<Product> &beverages, vector<Product> &snacks, vector<Product> &candies, vector<Product> &biscuits)
+    {
+        cout << endl;
+        cout << setw(20) << "Inventory Report" << endl;
+        cout << "---------------------------------------------\n";
+
+        cout << "Code       Name       Stock Quantity\n";
+        cout << "---------------------------------------------\n";
+
+        displayProductQuantities("Beverages", beverages);
+        displayProductQuantities("Snacks", snacks);
+        displayProductQuantities("candies", candies);
+        displayProductQuantities("Biscuits", biscuits);
+
+        string choice_str;
+        cout << "1.Restock a product\n2.Replace a product\n0.Cancel\n ";
+        cout << "Enter your choice :";
+        int choice = inputChecker(choice_str);
+
+        if (choice == 1)
+        { // Restock a product
+            cout << "Enter the item number to restock (0 to exit): ";
+
+            string itemNum_str;
+            int itemNum = inputChecker(itemNum_str);
+
+            if (itemNum >= 1 && itemNum <= 16)
+            {
+                string newQuantity_str;
+                int newQuantity = 0;
+                while (newQuantity <= 0 || newQuantity > 30)
+                {
+                    cout << "Enter the new quantity: ";
+                    newQuantity = inputChecker(newQuantity_str);
+                    if (newQuantity <= 0 || newQuantity > 30)
+                        cout << "Invalid Quantity" << endl;
+                }
+                if (itemNum >= 1 && itemNum <= 4)
+                {
+                    beverages[itemNum - 1].stock = newQuantity;
+                }
+                else if (itemNum >= 5 && itemNum <= 8)
+                {
+                    snacks[itemNum - 5].stock = newQuantity;
+                }
+                else if (itemNum >= 9 && itemNum <= 12)
+                {
+                    candies[itemNum - 9].stock = newQuantity;
+                }
+                else if (itemNum >= 13 && itemNum <= 16)
+                {
+                    biscuits[itemNum - 13].stock = newQuantity;
+                }
+                cout << "Inventory updated successfully." << endl;
+            }
+            else if (itemNum == 0)
+            {
+                return;
+            }
+            else
+            {
+                cout << "Invalid item number." << endl;
+            }
+        }
+        else if (choice == 2)
+        { // Replace a product
+            cout << "Enter the item number to replace (0 to exit): ";
+            string itemNum_str;
+            int itemNum = inputChecker(itemNum_str);
+
+            if (itemNum >= 1 && itemNum <= 16)
+            {
+                string newItem;
+                cout << "Enter the new item name: ";
+                cin >> newItem;
+
+                string qty_str;
+                int qty = 0;
+                while (qty <= 0 || qty > 30)
+                {
+                    cout << "Enter the stock: ";
+                    qty = inputChecker(qty_str);
+                    if (qty <= 0 || qty > 30)
+                        cout << "Invalid Quantity" << endl;
+                }
+
+                cout << "Enter the price: ";
+                string price_str;
+                float price = inputCheckerFloat(price_str);
+
+                if (itemNum >= 1 && itemNum <= 4)
+                {
+                    deletedprd.push_back(beverages[itemNum - 1]);
+                    beverages[itemNum - 1].name = newItem;
+                    beverages[itemNum - 1].stock = qty;
+                    beverages[itemNum - 1].price = price;
+                    beverages[itemNum - 1].qtySold = 0;
+                }
+                else if (itemNum >= 5 && itemNum <= 8)
+                {
+                    deletedprd.push_back(snacks[itemNum - 5]);
+                    snacks[itemNum - 5].name = newItem;
+                    snacks[itemNum - 5].stock = qty;
+                    snacks[itemNum - 5].price = price;
+                    snacks[itemNum - 5].qtySold = 0;
+                }
+                else if (itemNum >= 9 && itemNum <= 12)
+                {
+                    deletedprd.push_back(candies[itemNum - 9]);
+                    candies[itemNum - 9].name = newItem;
+                    candies[itemNum - 9].stock = qty;
+                    candies[itemNum - 9].price = price;
+                    candies[itemNum - 9].qtySold = 0;
+                }
+                else if (itemNum >= 13 && itemNum <= 16)
+                {
+                    deletedprd.push_back(biscuits[itemNum - 13]);
+                    biscuits[itemNum - 13].name = newItem;
+                    biscuits[itemNum - 13].stock = qty;
+                    biscuits[itemNum - 13].price = price;
+                    biscuits[itemNum - 13].qtySold = 0;
+                }
+                cout << "Inventory updated successfully." << endl;
+            }
+            else if (itemNum == 0)
+            {
+                return;
+            }
+            else
+            {
+                cout << "Invalid item number." << endl;
+            }
+        }
+        else if (choice == 0)
+        { // Cancel
+            return;
+        }
+        else
+        {
+            cout << "Invalid choice." << endl;
+        }
+    }
+
+    void salesReport(const vector<Product> &beverages, const vector<Product> &snacks, const vector<Product> &candies, const vector<Product> &biscuits)
+    {
+        cout << setw(10) << "Code" << setw(20) << "Name" << setw(10) << "Quantity" << setw(10) << "Price" << endl;
+        cout << setfill('-') << setw(50) << "-" << setfill(' ') << endl;
+
+        float totalAmount = 0;
+        int totalProductsSold = 0;
+        int cnt = 0;
+
+        // Display beverages
+        for (const auto &product : beverages)
+        {
+            cout << setw(10) << ++cnt << setw(20) << product.getName() << setw(10) << product.qtySold << setw(10) << product.getPrice() << endl;
+            totalProductsSold += product.qtySold;
+            totalAmount += product.qtySold * product.getPrice();
+        }
+
+        // Display snacks
+        for (const auto &product : snacks)
+        {
+            cout << setw(10) << ++cnt << setw(20) << product.getName() << setw(10) << product.qtySold << setw(10) << product.getPrice() << endl;
+            totalProductsSold += product.qtySold;
+            totalAmount += product.qtySold * product.getPrice();
+        }
+
+        // Display candies
+        for (const auto &product : candies)
+        {
+            totalAmount += product.qtySold * product.getPrice();
+            cout << setw(10) << ++cnt << setw(20) << product.getName() << setw(10) << product.qtySold << setw(10) << product.getPrice() << endl;
+            totalProductsSold += product.qtySold;
+        }
+
+        // Display biscuits
+        for (const auto &product : biscuits)
+        {
+            cout << setw(10) << ++cnt << setw(20) << product.getName() << setw(10) << product.qtySold << setw(10) << product.getPrice() << endl;
+            totalAmount += product.qtySold * product.getPrice();
+            totalProductsSold += product.qtySold;
+        }
+        // Display deleted products
+        for (const auto &product : deletedprd)
+        {
+            cout << setw(10) << ++cnt << setw(20) << product.getName() << setw(10) << product.qtySold << setw(10) << product.getPrice() << endl;
+            totalAmount += product.qtySold * product.getPrice();
+            totalProductsSold += product.qtySold;
+        }
+        cout << setfill('-') << setw(50) << "-" << setfill(' ') << endl;
+
+        cout << "Total Products Sold: " << totalProductsSold << endl;
+        cout << "Total Amount: $" << fixed << setprecision(2) << totalAmount << endl;
+    }
     void displayAdmin(vector<Product> &beverages, vector<Product> &snacks, vector<Product> &candies, vector<Product> &biscuits)
 
     {
@@ -118,7 +255,8 @@ public:
         {
             cout << "Enter pin" << endl;
             string tmp_str;
-            int tmp=inputChecker(tmp_str);
+            int tmp = inputChecker(tmp_str);
+
             if (pin == tmp)
                 break;
             else
@@ -140,12 +278,12 @@ public:
 
             string choice_str;
             cout << "Enter your choice: ";
-            int choice=inputChecker(choice_str);
+            int choice = inputChecker(choice_str);
 
             switch (choice)
             {
             case 1:
-
+                editInventory(beverages, snacks, candies, biscuits);
                 break;
             case 2:
                 cout << endl;
@@ -162,6 +300,7 @@ public:
 
                 break;
             case 3:
+                salesReport(beverages, snacks, candies, biscuits);
 
                 break;
             case 4:
@@ -169,12 +308,13 @@ public:
                 {
                     cout << "Enter pin" << endl;
                     string tmp_str;
-                    int tmp=inputChecker(tmp_str);
+                    int tmp = inputChecker(tmp_str);
                     if (pin == tmp)
                     {
+
                         cout << "Enter new pin" << endl;
                         string pin_str;
-                        pin=inputChecker(pin_str);
+                        pin = inputChecker(pin_str);
                         cout << "Pin changed" << endl;
                         break;
                     }
@@ -190,7 +330,7 @@ public:
                 {
                     cout << "Enter pin" << endl;
                     string tmp_str;
-                    int tmp=inputChecker(tmp_str);
+                    int tmp = inputChecker(tmp_str);
                     if (pin == tmp)
                     {
                         cout << "Shutting down";
@@ -269,7 +409,7 @@ public:
             do
             {
                 cout << "\nEnter the product code to add to cart (0 to go back to Menu): ";
-                code=inputChecker(code_str);
+                code = inputChecker(code_str);
 
                 // If the user enters 0, return without adding any item
                 if (code == 0)
@@ -335,7 +475,7 @@ public:
 
             // Ask for the quantity after a valid product code is entered
             cout << "Enter the quantity: ";
-            quantity=inputChecker(quantity_str);
+            quantity = inputChecker(quantity_str);
 
             // If quantity is 0, don't add the item to the cart
             if (quantity == 0)
@@ -413,26 +553,28 @@ public:
     }
 
     // Function to edit the quantity of an item in the cart
-    void editCart(vector<Product> &cart)
-    {   string srNo_str,newQuantity_str;
+    void editCart(vector<Product> &cart, vector<Product> &beverages, vector<Product> &snacks, vector<Product> &candies, vector<Product> &biscuits)
+    {
+        string srNo_str, newQuantity_str;
         int srNo, newQuantity;
 
         cout << "\nEnter the Sr. No. of the item you want to edit: ";
-        srNo=inputChecker(srNo_str);
+        srNo = inputChecker(srNo_str);
 
         if (srNo < 1 || srNo > static_cast<int>(cart.size()))
         {
             cout << "Invalid Sr No. Please enter a valid Sr No." << endl;
             return;
         }
-
+re1:
         cout << "Enter the new quantity: ";
-        newQuantity=inputChecker(newQuantity_str);
+        newQuantity = inputChecker(newQuantity_str);
 
-        if (newQuantity < 0)
+        if (newQuantity < 0 || newQuantity > (30 - (cart[srNo - 1].quantity)))
         {
             cout << "Invalid quantity. Please enter a valid quantity." << endl;
-            return;
+             cout<<"Available quantity is : "<<(30 - cart[srNo - 1].quantity)<<endl;
+            goto re1;
         }
 
         // Update the quantity of the item
@@ -463,17 +605,17 @@ public:
         cout << "4. Back" << endl;
         cout << "Enter your choice: ";
         string cartOption_str;
-        int cartOption=inputChecker(cartOption_str);
+        int cartOption = inputChecker(cartOption_str);
         switch (cartOption)
         {
         case 1:
-            editCart(cart);
+            editCart(cart, beverages, snacks, candies, biscuits);
             break;
         case 2:
             emptyCart(cart);
             break;
         case 3:
-            // Implement checkout functionality
+            checkout(cart, beverages, snacks, candies, biscuits);
             break;
         case 4:
             // Back to main menu
@@ -500,21 +642,31 @@ public:
         }
 
         displayCart(cart);
+
         string amountPaid_str;
-        
+
         cout << "Enter the amount paid: ";
-        float amountPaid=inputCheckerFloat(amountPaid_str);
+        float amountPaid = inputCheckerFloat(amountPaid_str);
 
         // Loop to ensure the user pays the correct amount
         while (amountPaid < totalPrice)
         {
             cout << "Amount paid is less than the total price. Please pay the correct amount." << endl;
             cout << "Enter the amount paid: ";
-            amountPaid=inputCheckerFloat(amountPaid_str);
+            cin >> amountPaid;
         }
 
         float change = amountPaid - totalPrice;
-        cout << "Change: $" << change << endl;
+        if (change == 0)
+        {
+
+            cout << "Change: 0$" << endl;
+        }
+        else
+        {
+
+            cout << "Change: $" << change << endl;
+        }
 
         // Update the stock of each product in the cart
         for (Product &product : cart)
@@ -531,10 +683,10 @@ public:
         cout << "Thank you for your purchase. Have a nice day!" << endl;
 
         // Wait for 10 seconds
-        // this_thread::sleep_for(chrono::seconds(10));
+        this_thread::sleep_for(chrono::seconds(5));
 
         // Clear the screen
-        // system("cls"); // For Windows4
+        system("cls"); // For Windows4
 
         // Display all the categories with their items again
         displayTwoCategories("Beverages", beverages, "Snacks", snacks);
@@ -580,11 +732,7 @@ int main()
     vector<Product> cart;
 
     // Display menu
-   
-     string choice_str;
-     int choice;
-     string cartOption_str;
-     int cartOption;
+    int choice;
     do
     {
         cout << "-------------------------------------------------------------------------------" << endl;
@@ -593,16 +741,21 @@ int main()
         cout << setw(20) << "2. Cart";
         cout << setw(20) << "3. Settings" << endl;
         cout << "-------------------------------------------------------------------------------" << endl;
- 
+
+        string choice_str;
+        int choice;
+        string cartOption_str;
+        int cartOption;
+
         do
         {
             cout << "\nEnter your choice: ";
-            choice=inputChecker(choice_str);
-            if (choice > 3 || choice <= 0)
+            choice = inputChecker(choice_str);
+            if (choice > 3 || choice < 0)
             {
                 cout << "Invalid input , Please enter valid input ." << endl;
             }
-        } while (choice > 3 || choice <= 0);
+        } while (choice > 3 || choice < 0);
 
         switch (choice)
         {
@@ -617,12 +770,11 @@ int main()
             cout << "3. Check Out" << endl;
             cout << "4. Back" << endl;
             cout << "Enter your choice: ";
-            
-             cartOption=inputChecker(cartOption_str);
+            cartOption = inputChecker(cartOption_str);
             switch (cartOption)
             {
             case 1:
-                vm.editCart(cart);
+                vm.editCart(cart, beverages, snacks, candies, biscuits);
                 break;
             case 2:
                 vm.emptyCart(cart);
@@ -650,4 +802,73 @@ int main()
     } while (choice != 0);
 
     return 0;
+}
+
+int inputChecker(string &s)
+{
+
+    bool check;
+    do
+    {
+        check = true;
+        getline(cin, s);
+        if (s == "")
+        {
+            cout << "Enter valid input " << endl;
+            check = false;
+            continue;
+        }
+
+        for (int i = 0; i < s.length(); i++)
+        {
+            if (!(s[i] >= '0' && s[i] <= '9'))
+            {
+                cout << "Enter valid input " << endl;
+                check = false;
+                break;
+            }
+        }
+    } while (!check);
+
+    return stoi(s);
+}
+
+float inputCheckerFloat(string &s)
+{
+
+    bool check;
+    int count = 0;
+    do
+    {
+        check = true;
+        getline(cin, s);
+        if (s == "")
+        {
+            cout << "Enter valid input " << endl;
+            check = false;
+            continue;
+        }
+
+        for (int i = 0; i < s.length(); i++)
+        {
+            if (!(s[i] >= '0' && s[i] <= '9') && s[i] != '.')
+            {
+                cout << "Enter valid input " << endl;
+                check = false;
+                break;
+            }
+            if (s[i] == '.')
+            {
+                count++;
+                if (count > 1)
+                {
+                    cout << "Enter valid input " << endl;
+                    check = false;
+                    break;
+                }
+            }
+        }
+    } while (!check);
+
+    return stof(s);
 }
