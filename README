@@ -1,6 +1,6 @@
-# Vending Machine Project
+Vending Machine Project
 
-## Overview
+Overview
 This project implements a vending machine system in C++. The vending machine allows users to select products from various categories, add them to the cart, view the cart, and proceed with the checkout process. Additionally, it provides administrative functionalities to manage product inventory and settings.
 
 ## Modules
